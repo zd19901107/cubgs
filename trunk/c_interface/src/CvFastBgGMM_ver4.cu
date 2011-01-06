@@ -100,7 +100,7 @@ void copyImageData(IplImage* h_img, unsigned char* d_pinnedMem, int channels)
 
 /*====================================================================================*/
 
-CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* frame0, IplImage* frame1, IplImage* frame2)
+CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* frame0)
 {
 	CvFastBgGMM* h_pGMMRet = new CvFastBgGMM();
 
@@ -151,12 +151,11 @@ CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* frame0, 
 	CUDAGMM_SAFE_CALL(cudaStreamCreate(&(h_pGMMRet->copyStream)));
 	CUDAGMM_SAFE_CALL(cudaStreamCreate(&(h_pGMMRet->execStream)));
 
+	// cudaHostAllocMapped might fail
 	CUDAGMM_SAFE_CALL(cudaHostAlloc((void**)&(h_pGMMRet->h_pinnedIn), 
 		h_pGMMRet->nInputImgSize, cudaHostAllocWriteCombined));
 	CUDAGMM_SAFE_CALL(cudaHostAlloc((void**)&(h_pGMMRet->h_pinnedOut), 
 		h_pGMMRet->nOutputImgSize, cudaHostAllocDefault));
-	//CUDAGMM_SAFE_CALL(cudaHostAlloc((void**)&(h_pGMMRet->h_pinnedIn), h_pGMMRet->nInputImgSize, cudaHostAllocMapped));
-	//CUDAGMM_SAFE_CALL(cudaHostAlloc((void**)&(h_pGMMRet->h_pinnedOut), h_pGMMRet->nOutputImgSize, cudaHostAllocMapped));
 	CUDAGMM_SAFE_CALL(cudaMalloc((void**)&(h_pGMMRet->d_inputImg2), h_pGMMRet->nInputImgSize));
 	CUDAGMM_SAFE_CALL(cudaMalloc((void**)&(h_pGMMRet->d_outputImg2), h_pGMMRet->nOutputImgSize));
 
@@ -172,17 +171,15 @@ CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* frame0, 
 	cudaUpdateFastBgGMM<<< (h_pGMMRet->nBlocksPerGrid), (h_pGMMRet->nThreadsPerBlock), 4, h_pGMMRet->execStream >>>
 		( h_pGMMRet->d_inputImg2, h_pGMMRet->d_outputImg2 );
 
-	cvCvtColor(frame1, h_pGMMRet->inputFrame, CV_BGR2BGRA);
-	copyImageData<true>(h_pGMMRet->inputFrame, h_pGMMRet->h_pinnedIn, 4);
 	CUDAGMM_SAFE_CALL(cudaMemcpyAsync(h_pGMMRet->d_inputImg, h_pGMMRet->h_pinnedIn, h_pGMMRet->nInputImgSize, 
 		cudaMemcpyHostToDevice, h_pGMMRet->copyStream));
 	CUDAGMM_SAFE_CALL(cudaStreamSynchronize(h_pGMMRet->execStream));
 	CUDAGMM_SAFE_CALL(cudaMemcpy(h_pGMMRet->h_pinnedOut, h_pGMMRet->d_outputImg2, h_pGMMRet->nOutputImgSize, cudaMemcpyDeviceToHost));
+
 	CUDAGMM_SAFE_CALL(cudaStreamSynchronize(h_pGMMRet->copyStream));
 	cudaUpdateFastBgGMM<<< (h_pGMMRet->nBlocksPerGrid), (h_pGMMRet->nThreadsPerBlock), 4, h_pGMMRet->execStream >>>
 		( h_pGMMRet->d_inputImg, h_pGMMRet->d_outputImg );
-	cvCvtColor(frame2, h_pGMMRet->inputFrame, CV_BGR2BGRA);
-	copyImageData<true>(h_pGMMRet->inputFrame, h_pGMMRet->h_pinnedIn, 4);
+
 	CUDAGMM_SAFE_CALL(cudaMemcpyAsync(h_pGMMRet->d_inputImg2, h_pGMMRet->h_pinnedIn, h_pGMMRet->nInputImgSize, 
 		cudaMemcpyHostToDevice, h_pGMMRet->copyStream));
 

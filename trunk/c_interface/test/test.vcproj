@@ -36,6 +36,7 @@
 				Name="Cudart Build Rule"
 				Include="..\..\dependencies\opencv2_2\include;..\..\dependencies\opencv2_2\include\opencv"
 				Arch1="11"
+				MaxRegCount="20"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -118,6 +119,7 @@
 				Name="Cudart Build Rule"
 				Include="..\..\dependencies\opencv2_2\include;..\..\dependencies\opencv2_2\include\opencv"
 				Arch1="11"
+				MaxRegCount="20"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -199,6 +201,10 @@
 			</File>
 			<File
 				RelativePath="..\src\CvFastBgGMM_ver4.cu"
+				>
+			</File>
+			<File
+				RelativePath="..\src\CvFastBgGMM_ver5.cu"
 				>
 			</File>
 			<File
