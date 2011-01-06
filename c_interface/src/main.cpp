@@ -10,7 +10,7 @@
 
 #define TIMER_CUDA	TRUE
 
-#define TEST_VIDEO "..\\..\\data\\vid\\video4.avi"
+#define TEST_VIDEO "..\\..\\data\\vid\\video7_long.avi"
 
 int main(int argc, char** argv)
 {
@@ -48,16 +48,7 @@ int main(int argc, char** argv)
 	pGMMParams->fAlphaT = 0.008f;
 
 	// officially create the parameter (on device memory)
-#if(CUDAGMM_VERSION >= 4)
-	//IplImage* frame1 = NULL, *frame2 = NULL;
-	
-	//frame1 = cvQueryFrame(capture);
-	//frame2 = cvQueryFrame(capture);
-	//pGMM = cvCreateFastBgGMM(pGMMParams, videoFrame, frame1, frame2);
-	pGMM = cvCreateFastBgGMM(pGMMParams, videoFrame, videoFrame, videoFrame);
-#else
 	pGMM = cvCreateFastBgGMM(pGMMParams, videoFrame);
-#endif
 
 #if(!TIMER_CUDA)
 	LARGE_INTEGER lFrequency, lStart, lEnd;

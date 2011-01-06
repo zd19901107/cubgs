@@ -63,10 +63,10 @@
 //  4: asynchronous execution
 //  5: template kernel function <- nearly useless since we 'template' on the BLOCK_SIZE.
 //
-//  We only have 3 and 4 here.
+//  We only have 3, 4, 5 here.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-#define CUDAGMM_VERSION 4
+#define CUDAGMM_VERSION 3
 
 #ifdef _DEBUG
 #define	CUDAGMM_SAFE_CALL(x)	CUDA_SAFE_CALL(x)
@@ -257,11 +257,7 @@ float cvUpdateFastBgGMMTimer(CvFastBgGMM* pGMM, IplImage* inputImg);
 ///////////
 CvFastBgGMMParams* cvCreateFastBgGMMParams(int width, int height);
 
-#if(CUDAGMM_VERSION >= 4)
-	CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* frame0, IplImage* frame1, IplImage* frame2);
-#else
-	CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* initFrame);
-#endif
+CvFastBgGMM* cvCreateFastBgGMM(CvFastBgGMMParams* pGMMParams, IplImage* initFrame);
 
 void cvReleaseFastBgGMM(CvFastBgGMM** h_ppGMM);
 
