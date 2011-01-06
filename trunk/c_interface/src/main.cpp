@@ -83,6 +83,8 @@ int main(int argc, char** argv)
 		char sOutput[MAX_PATH];
 		sprintf_s(sOutput, "K:\\Ret\\gpu\\ret%05d.png", iFrameCnt);
 		cvSaveImage(sOutput, pGMM->h_outputImg);
+		sprintf_s(sOutput, "K:\\Ret\\original\\ret%05d.png", iFrameCnt);
+		cvSaveImage(sOutput, videoFrame);
 
 		cvShowImage("BG", videoFrame);
 		cvShowImage("FG", pGMM->h_outputImg);	
@@ -97,6 +99,7 @@ int main(int argc, char** argv)
 	cvDestroyWindow("FG");
 
 	cvReleaseFastBgGMM(&pGMM);
+	delete pGMMParams;
 	cvReleaseCapture(&capture);
 
 	return 0;

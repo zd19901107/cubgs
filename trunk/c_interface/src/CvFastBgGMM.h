@@ -6,7 +6,7 @@
 //  Vu Pham, Phong Vo, Vu Thanh Hung, Le Hoai Bac
 //  IEEE-RIVF, Nov 2010
 //
-//  This is the GPU implementation of Zivkovic's algorithm. Fore more details:
+//  This is the GPU implementation of Zivkovic's algorithm. For more details:
 //
 //  "Efficient Adaptive Density Estimation per Image Pixel for the Task of Background Subtraction"
 //  Z.Zivkovic, F. van der Heijden 
@@ -37,6 +37,9 @@
 //  or use the following function to get the processing time:
 //  float time = cvUpdateFastBgGMMTimer(gmm, new_frame);
 //
+//  Finally, call cvReleaseFastBgGMM() to release the memory
+//  cvReleaseFastBgGMM(&gmm);
+//  delete params;
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifndef CV_FASTBGGMM_1FDF3B87_918D_42ef_97B8_249FE74AD689
@@ -66,7 +69,7 @@
 //  We only have 3, 4, 5 here.
 //
 //////////////////////////////////////////////////////////////////////////////////////
-#define CUDAGMM_VERSION 3
+#define CUDAGMM_VERSION 4
 
 #ifdef _DEBUG
 #define	CUDAGMM_SAFE_CALL(x)	CUDA_SAFE_CALL(x)
