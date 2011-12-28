@@ -81,12 +81,6 @@ int main(int argc, char** argv)
 	cutilSafeCall(cudaMalloc((void**)&(ucGaussian), 4*iElemCount));
 	cutilSafeCall(cudaMalloc((void**)&(rWeight), iElemCount));
 
-	unsigned char* cpu_image = new unsigned char[width * height * 4];
-	if (!cpu_image)
-	{
-		std::cout << "ERROR: Failed to allocate memory" << std::endl;
-		return -1;
-	}
 
 	if (!out_image)
 	{
@@ -119,15 +113,9 @@ int main(int argc, char** argv)
 	
 
 		cvShowImage("IN", input_image);
-		for (int i = 0; i < width * height; i++)
-		{
-			cpu_image[i * 4 + 0] = (unsigned char)input_image->imageData[i * 4 + 0];
-			cpu_image[i * 4 + 1] = (unsigned char)input_image->imageData[i * 4 + 1];
-			cpu_image[i * 4 + 2] = (unsigned char)input_image->imageData[i * 4 + 2];
-			cpu_image[i * 4 + 3] = (unsigned char)input_image->imageData[i * 4 + 3];
-		}
+	
 
-		cuda_err = cudaMemcpy(gpu_image, cpu_image, (width * height * 4) * sizeof(char), cudaMemcpyHostToDevice);
+		cuda_err = cudaMemcpy(gpu_image, input_image->imageData, (width * height * 4) * sizeof(char), cudaMemcpyHostToDevice);
 		if (cuda_err != cudaSuccess)
 		{
 			std::cout << "ERROR: Failed cudaMemcpy" << std::endl;
@@ -146,14 +134,14 @@ int main(int argc, char** argv)
 			exit(-1);
 		}
 
-		cudaMemcpy(cpu_image, output_image, (width * height) * sizeof(char), cudaMemcpyDeviceToHost);
+		cudaMemcpy(out_image->imageData, output_image, (width * height) * sizeof(char), cudaMemcpyDeviceToHost);
 		if (cuda_err != cudaSuccess)
 		{
 			std::cout << "ERROR: Failed cudaMemcpy" << std::endl;
 			return -1;
 		}
 
-		out_image->imageData = (char *) cpu_image;
+		
 
  		cvShowImage("out", out_image);
 		key = cvWaitKey(10);
@@ -177,7 +165,7 @@ int main(int argc, char** argv)
 	cvDestroyWindow("IN");
 	cvDestroyWindow("out");
 
-	delete[] cpu_image;
+	
 
 	return 0;
 }
